@@ -2,10 +2,8 @@
    BAZOR - LÓGICA DEL CATÁLOGO Y SITIO WEB
    ========================================== */
 
-// Configuración Comercial
 const PHONE_NUMBER = "573016545328";
 
-// Plantilla Base de Datos de Productos (Ejemplos con tus imágenes e información)
 const sampleProducts = [
     {
         id: 1,
@@ -70,13 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
 });
 
-// Renderizar la lista de productos
 function renderProducts(products) {
     const container = document.getElementById('products-container');
     container.innerHTML = '';
 
     if (products.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-gray);">No se encontraron productos disponibles.</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-gray); padding: 40px;">No se encontraron productos disponibles.</p>`;
         return;
     }
 
@@ -87,7 +84,9 @@ function renderProducts(products) {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
-            <img src="${product.imagen}" alt="${product.nombre}" class="product-img" onerror="this.src='https://via.placeholder.com/300x240/1f1f1f/ffffff?text=BAZOR'">
+            <div class="product-img-container">
+                <img src="${product.imagen}" alt="${product.nombre}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60'">
+            </div>
             <div class="product-details">
                 <span class="product-brand">${product.marca}</span>
                 <h3 class="product-title">${product.nombre}</h3>
@@ -101,7 +100,6 @@ function renderProducts(products) {
     });
 }
 
-// Filtro por Categoría
 function filterCategory(category) {
     activeCategory = category;
     activeBrand = 'Todas';
@@ -112,14 +110,12 @@ function filterCategory(category) {
     });
 }
 
-// Filtro por Marca
 function filterBrand(brand) {
     activeBrand = brand;
     applyFilters();
     scrollToSection('catalogo');
 }
 
-// Aplicar combinación de filtros
 function applyFilters() {
     const searchVal = document.getElementById('search-input').value.toLowerCase();
 
@@ -136,13 +132,11 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-// Búsqueda en tiempo real
 function setupSearch() {
     const input = document.getElementById('search-input');
     input.addEventListener('input', applyFilters);
 }
 
-// Navegación fluida y Menú móvil
 function setupNavigation() {
     const toggle = document.getElementById('mobile-menu');
     const nav = document.getElementById('navbar');
