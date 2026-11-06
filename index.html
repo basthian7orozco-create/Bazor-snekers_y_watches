@@ -7,25 +7,24 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Hojas de estilo mejoradas -->
+    <!-- Hojas de estilo -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <!-- Barra de Anuncios Superior -->
     <div class="top-bar">
-        <p><i class="fa-solid fa-truck-fast"></i> Envíos a todo Colombia | <i class="fa-solid fa-shield-halved"></i> Pago contra entrega en Valle de Aburrá / Medellín</p>
+        <p><i class="fa-solid fa-truck-fast"></i> Envíos a todo Colombia | <i class="fa-solid fa-shield-halved"></i> Pago contra entrega en Medellín y Valle de Aburrá</p>
     </div>
 
     <!-- Encabezado / Navegación -->
     <header class="header">
         <div class="header-container">
             <a href="#" class="logo-link">
-                <img src="assets/logo-bazor.jpeg" alt="BAZOR Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="logo-fallback" style="display:none; font-family:'Montserrat',sans-serif; font-weight:800; color:#d4af37; font-size:1.4rem; letter-spacing:2px;">BAZOR</span>
+                <img src="assets/logo-bazor.png" alt="BAZOR Logo" class="logo-img">
             </a>
             <nav class="navbar" id="navbar">
                 <a href="#inicio" class="nav-link active">Inicio</a>
@@ -41,12 +40,11 @@
         </div>
     </header>
 
-    <!-- Sección Hero (Portada) -->
+    <!-- Sección Hero (Portada Armónica Rojo Borgoña & Plata) -->
     <section id="inicio" class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="assets/logo-bazor.jpg" alt="BAZOR Sneakers & Watches" class="hero-logo" onerror="this.style.display='none'; document.getElementById('hero-text-fallback').style.display='block';">
-            <h1 id="hero-text-fallback" style="display:none; font-family:'Montserrat',sans-serif; font-size:3rem; color:#d4af37; margin-bottom:15px; letter-spacing:3px;">BAZOR</h1>
+            <img src="assets/logo-bazor.png" alt="BAZOR Logo" class="hero-logo">
             <p class="hero-subtitle">YOUR STYLE. YOUR IDENTITY.</p>
             <a href="#catalogo" class="btn btn-primary">EXPLORAR CATÁLOGO <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -55,18 +53,20 @@
     <!-- Acceso Rápido por Categorías -->
     <section class="categories-section">
         <div class="container grid-categories">
-            <div class="category-card" onclick="filterCategory('Sneakers'); scrollToSection('catalogo');">
+            <div class="category-card cat-sneakers" onclick="filterCategory('Sneakers'); scrollToSection('catalogo');">
+                <div class="category-overlay"></div>
                 <div class="category-info">
                     <h3>SNEAKERS</h3>
-                    <p>Las mejores marcas en un solo lugar.</p>
-                    <span class="btn-text">VER MÁS <i class="fa-solid fa-arrow-right"></i></span>
+                    <p>Las mejores marcas urbanas y exclusivas en un solo lugar.</p>
+                    <span class="btn-text">VER SNEAKERS <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </div>
-            <div class="category-card category-watches" onclick="filterCategory('Relojes'); scrollToSection('catalogo');">
+            <div class="category-card cat-watches" onclick="filterCategory('Relojes'); scrollToSection('catalogo');">
+                <div class="category-overlay"></div>
                 <div class="category-info">
                     <h3>RELOJES</h3>
-                    <p>Precisión, estilo y elegancia.</p>
-                    <span class="btn-text">VER MÁS <i class="fa-solid fa-arrow-right"></i></span>
+                    <p>Precisión, estilo y elegancia para destacar.</p>
+                    <span class="btn-text">VER RELOJES <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
     <!-- Sección de Marcas -->
     <section id="marcas" class="brands-section">
         <div class="container">
-            <h2 class="section-title">NUESTRAS MARCAS</h2>
+            <h2 class="section-title">MARCAS DESTACADAS</h2>
             <div class="brands-grid">
                 <div class="brand-item" onclick="filterBrand('Nike')"><span>NIKE</span></div>
                 <div class="brand-item" onclick="filterBrand('Adidas')"><span>ADIDAS</span></div>
@@ -90,7 +90,7 @@
     <!-- Sección del Catálogo -->
     <section id="catalogo" class="catalog-section">
         <div class="container">
-            <h2 class="section-title">CATÁLOGO DE PRODUCTOS</h2>
+            <h2 class="section-title">CATÁLOGO EXCLUSIVO</h2>
             
             <!-- Buscador y Filtros -->
             <div class="catalog-controls">
@@ -105,9 +105,9 @@
                 </div>
             </div>
 
-            <!-- Grilla donde se cargarán los productos -->
+            <!-- Grilla de Productos -->
             <div class="products-grid" id="products-container">
-                <!-- Dinámico -->
+                <!-- Dinámico con JavaScript -->
             </div>
         </div>
     </section>
@@ -116,7 +116,7 @@
     <section class="features-section">
         <div class="container features-grid">
             <div class="feature-item">
-                <i class="fa-solid fa-truck"></i>
+                <i class="fa-solid fa-truck-fast"></i>
                 <div>
                     <h4>Envíos Seguros</h4>
                     <p>A todo Colombia</p>
@@ -126,7 +126,7 @@
                 <i class="fa-solid fa-hand-holding-dollar"></i>
                 <div>
                     <h4>Pago Contra Entrega</h4>
-                    <p>Disponible en Medellín y área metropolitana</p>
+                    <p>Disponible en Medellín y Valle de Aburrá</p>
                 </div>
             </div>
             <div class="feature-item">
@@ -146,11 +146,11 @@
         </div>
     </section>
 
-    <!-- Pie de Página (Footer) / Sección Contacto -->
+    <!-- Pie de Página (Footer) -->
     <footer id="contacto" class="footer">
         <div class="container footer-grid">
             <div class="footer-col">
-                <img src="assets/logo-bazor.jpg" alt="BAZOR Logo" class="footer-logo" onerror="this.style.display='none';">
+                <img src="assets/logo-bazor.png" alt="BAZOR Logo" class="footer-logo">
                 <p>Tu tienda de confianza en Sneakers y Relojes de alta gama en Colombia. Calidad, estilo y elegancia.</p>
             </div>
             <div class="footer-col">

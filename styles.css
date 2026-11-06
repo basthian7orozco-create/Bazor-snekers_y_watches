@@ -1,17 +1,22 @@
 /* ==========================================
-   BAZOR - ESTILOS MEJORADOS (Dark Luxury & Motion)
+   BAZOR - ESTILOS VINO/BORGOÑA & PLATA LUXURY
    ========================================== */
 
 :root {
-    --bg-main: #070707;
-    --bg-card: #121212;
-    --bg-header: #0d0d0d;
-    --gold: #d4af37;
-    --gold-glow: rgba(212, 175, 55, 0.4);
-    --gold-hover: #f1c40f;
-    --text-white: #ffffff;
-    --text-gray: #b0b0b0;
-    --border-color: #262626;
+    --bg-main: #0b0709;
+    --bg-surface: #140d11;
+    --bg-card: #1c1218;
+    --header-bg: #070406;
+    
+    /* Paleta unificada: Borgoña / Plata / Dorado Champagne */
+    --burgundy: #800e2e;
+    --burgundy-bright: #a3123b;
+    --silver: #e2e8f0;
+    --gold-subtle: #c5a059;
+    --border-color: #2b1a23;
+    
+    --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.6);
+    --shadow-hover: 0 15px 30px rgba(163, 18, 59, 0.35);
     --font-heading: 'Montserrat', sans-serif;
     --font-body: 'Roboto', sans-serif;
 }
@@ -25,7 +30,7 @@
 
 body {
     background-color: var(--bg-main);
-    color: var(--text-white);
+    color: var(--silver);
     font-family: var(--font-body);
     line-height: 1.6;
 }
@@ -36,21 +41,21 @@ body {
     margin: 0 auto;
 }
 
-/* --- Barra Superior con brillo sutil --- */
+/* --- Barra Superior --- */
 .top-bar {
-    background: linear-gradient(90deg, #000000, #161616, #000000);
-    color: var(--gold);
+    background: linear-gradient(90deg, #050304, #26050e, #050304);
+    color: var(--gold-subtle);
     text-align: center;
-    padding: 9px 10px;
+    padding: 10px;
     font-size: 0.85rem;
-    font-weight: 600;
-    border-bottom: 1px solid var(--border-color);
+    font-weight: 700;
     letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* --- Header & Navbar --- */
+/* --- Header con Logo en Negro Absoluto --- */
 .header {
-    background-color: var(--bg-header);
+    background-color: var(--header-bg);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -62,12 +67,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 5%;
+    padding: 12px 5%;
 }
 
 .logo-img {
     height: 42px;
     object-fit: contain;
+    display: block;
     transition: transform 0.3s ease;
 }
 
@@ -81,13 +87,17 @@ body {
 }
 
 .nav-link {
-    color: var(--text-white);
+    color: var(--silver);
     text-decoration: none;
     font-family: var(--font-heading);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     transition: all 0.3s ease;
     position: relative;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--gold-subtle);
 }
 
 .nav-link::after {
@@ -97,7 +107,7 @@ body {
     height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: var(--gold);
+    background-color: var(--gold-subtle);
     transition: width 0.3s ease;
 }
 
@@ -105,139 +115,147 @@ body {
     width: 100%;
 }
 
-.nav-link:hover, .nav-link.active {
-    color: var(--gold);
-}
-
 .menu-toggle {
     display: none;
     font-size: 1.5rem;
-    color: var(--gold);
+    color: var(--gold-subtle);
     cursor: pointer;
 }
 
-/* --- Hero Section Dinámico --- */
+/* --- Hero Section (Fondo Borgoña con Sneaker y Reloj de alta gama) --- */
 .hero {
     position: relative;
-    height: 80vh;
-    background: linear-gradient(180deg, rgba(7,7,7,0.3) 0%, rgba(7,7,7,0.95) 100%), url('assets/hero-bg.jpg') center/cover no-repeat;
+    height: 82vh;
+    /* Imagen compuesta de fondo que combina zapatilla urbana y reloj de lujo sobre tono borgoña */
+    background: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&auto=format&fit=crop&q=80') center/cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
 }
 
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(128, 14, 46, 0.65) 0%, rgba(11, 7, 9, 0.95) 100%);
+}
+
 .hero-content {
     z-index: 2;
     padding: 20px;
-    animation: fadeInDown 1s ease;
 }
 
 .hero-logo {
-    max-width: 350px;
-    width: 85%;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
-    animation: pulseLogo 3s infinite ease-in-out;
-}
-
-@keyframes pulseLogo {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
+    max-width: 320px;
+    width: 100%;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.9));
 }
 
 .hero-subtitle {
     font-family: var(--font-heading);
     letter-spacing: 5px;
-    color: var(--gold);
+    color: var(--gold-subtle);
     font-weight: 700;
     margin-bottom: 35px;
-    font-size: 1.1rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    font-size: 1.2rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9);
 }
 
 .btn {
     display: inline-block;
-    padding: 14px 32px;
+    padding: 15px 36px;
     border-radius: 30px;
     text-decoration: none;
     font-family: var(--font-heading);
     font-weight: 700;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.3));
-    color: var(--text-white);
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 15px rgba(212,175,55,0.2);
+    background: linear-gradient(135deg, var(--burgundy), var(--burgundy-bright));
+    color: #ffffff;
+    border: 1.5px solid var(--gold-subtle);
+    box-shadow: 0 8px 25px rgba(163, 18, 59, 0.4);
 }
 
 .btn-primary:hover {
-    background-color: var(--gold);
-    color: #000;
     transform: translateY(-4px);
-    box-shadow: 0 0 25px var(--gold-glow);
+    background: var(--burgundy-bright);
+    box-shadow: 0 12px 35px rgba(163, 18, 59, 0.7);
 }
 
-/* --- Categorías Destacadas con Animación --- */
+/* --- Categorías Destacadas (Unificadas al diseño borgoña) --- */
 .categories-section {
-    padding: 60px 0;
+    padding: 75px 0;
+    background: var(--bg-main);
 }
 
 .grid-categories {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
 }
 
 .category-card {
-    background: linear-gradient(145deg, #121212, #181818);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 45px 30px;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    padding: 60px 35px;
     cursor: pointer;
     transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
 }
 
-.category-card::before {
-    content: '';
+.category-card.cat-sneakers {
+    background: url('https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80') center/cover no-repeat;
+}
+
+.category-card.cat-watches {
+    background: url('https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=800&auto=format&fit=crop&q=80') center/cover no-repeat;
+}
+
+.category-overlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 3px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(20, 13, 17, 0.4) 0%, rgba(20, 13, 17, 0.92) 100%);
+    transition: background 0.3s ease;
+}
+
+.category-card:hover .category-overlay {
+    background: linear-gradient(180deg, rgba(20, 13, 17, 0.2) 0%, rgba(20, 13, 17, 0.8) 100%);
 }
 
 .category-card:hover {
     transform: translateY(-8px);
-    border-color: var(--gold);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+    border-color: var(--gold-subtle);
+    box-shadow: var(--shadow-hover);
 }
 
-.category-card:hover::before {
-    opacity: 1;
+.category-info {
+    position: relative;
+    z-index: 2;
 }
 
 .category-info h3 {
     font-family: var(--font-heading);
-    font-size: 1.8rem;
-    color: var(--gold);
-    margin-bottom: 12px;
+    font-size: 2.1rem;
+    color: var(--gold-subtle);
+    margin-bottom: 10px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 
 .category-info p {
-    color: var(--text-gray);
+    color: var(--silver);
     margin-bottom: 25px;
+    font-size: 1.05rem;
 }
 
 .btn-text {
     font-weight: 700;
-    color: var(--text-white);
-    font-size: 0.95rem;
+    color: #ffffff;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -245,14 +263,14 @@ body {
 }
 
 .category-card:hover .btn-text {
-    color: var(--gold);
-    gap: 12px;
+    color: var(--gold-subtle);
+    gap: 14px;
 }
 
-/* --- Marcas Interactivas --- */
+/* --- Marcas --- */
 .brands-section {
-    padding: 50px 0;
-    background: linear-gradient(180deg, var(--bg-main), #0c0c0c, var(--bg-main));
+    padding: 60px 0;
+    background: var(--bg-surface);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -260,11 +278,10 @@ body {
 .section-title {
     text-align: center;
     font-family: var(--font-heading);
-    font-size: 2rem;
-    color: var(--gold);
-    margin-bottom: 40px;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 10px rgba(212,175,55,0.2);
+    font-size: 2.1rem;
+    color: var(--gold-subtle);
+    margin-bottom: 45px;
+    letter-spacing: 1px;
 }
 
 .brands-grid {
@@ -275,27 +292,29 @@ body {
 }
 
 .brand-item {
-    background: #141414;
-    padding: 14px 28px;
+    background: var(--bg-card);
+    padding: 16px 34px;
     border-radius: 12px;
     border: 1px solid var(--border-color);
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 800;
     font-family: var(--font-heading);
+    color: var(--silver);
     transition: all 0.3s ease;
 }
 
 .brand-item:hover {
-    border-color: var(--gold);
-    background: #1f1f1f;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px var(--gold-glow);
-    color: var(--gold);
+    border-color: var(--gold-subtle);
+    background: var(--burgundy);
+    color: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(163, 18, 59, 0.4);
 }
 
-/* --- Catálogo y Productos con Zoom Elegante --- */
+/* --- Catálogo y Productos --- */
 .catalog-section {
-    padding: 70px 0;
+    padding: 80px 0;
+    background: var(--bg-main);
 }
 
 .catalog-controls {
@@ -309,32 +328,33 @@ body {
 .search-box {
     display: flex;
     align-items: center;
-    background: #121212;
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: 12px 18px;
+    padding: 14px 20px;
     border-radius: 30px;
     flex: 1;
     min-width: 280px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
 }
 
 .search-box:focus-within {
-    border-color: var(--gold);
-    box-shadow: 0 0 15px var(--gold-glow);
+    border-color: var(--gold-subtle);
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
 }
 
 .search-box input {
     background: transparent;
     border: none;
-    color: var(--text-white);
+    color: var(--silver);
     outline: none;
     margin-left: 12px;
     width: 100%;
     font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .search-box i {
-    color: var(--gold);
+    color: var(--gold-subtle);
 }
 
 .filter-buttons {
@@ -343,52 +363,53 @@ body {
 }
 
 .filter-btn {
-    background: #121212;
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
-    color: var(--text-white);
-    padding: 12px 22px;
+    color: var(--silver);
+    padding: 14px 26px;
     border-radius: 25px;
     cursor: pointer;
     font-family: var(--font-heading);
-    font-size: 0.85rem;
+    font-size: 0.88rem;
+    font-weight: 700;
     transition: all 0.3s ease;
 }
 
 .filter-btn.active, .filter-btn:hover {
-    background: var(--gold);
-    color: #000;
-    border-color: var(--gold);
-    font-weight: 700;
-    box-shadow: 0 0 15px var(--gold-glow);
+    background: var(--burgundy);
+    color: #ffffff;
+    border-color: var(--gold-subtle);
+    box-shadow: 0 4px 15px rgba(163, 18, 59, 0.4);
 }
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
 }
 
 .product-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: all 0.4s ease;
+    box-shadow: var(--shadow-soft);
 }
 
 .product-card:hover {
     transform: translateY(-8px);
-    border-color: var(--gold);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.15);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--gold-subtle);
 }
 
 .product-img-container {
     width: 100%;
-    height: 250px;
+    height: 260px;
     overflow: hidden;
-    background: #181818;
+    background: #0d0709;
 }
 
 .product-img {
@@ -403,16 +424,16 @@ body {
 }
 
 .product-details {
-    padding: 22px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 
 .product-brand {
-    font-size: 0.75rem;
-    color: var(--gold);
-    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--gold-subtle);
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -420,23 +441,24 @@ body {
 .product-title {
     font-family: var(--font-heading);
     font-size: 1.15rem;
+    color: #ffffff;
     margin: 8px 0 12px 0;
 }
 
 .product-price {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-white);
-    margin-bottom: 18px;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--silver);
+    margin-bottom: 20px;
 }
 
 .btn-whatsapp {
     background: #25d366;
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
     text-align: center;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 13px;
+    border-radius: 12px;
     font-weight: 700;
     font-size: 0.9rem;
     margin-top: auto;
@@ -451,19 +473,19 @@ body {
 .btn-whatsapp:hover {
     background: #1ebd56;
     transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
 }
 
 /* --- Garantías --- */
 .features-section {
-    background: #0a0a0a;
-    padding: 50px 0;
+    background: var(--bg-surface);
+    padding: 60px 0;
     border-top: 1px solid var(--border-color);
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 25px;
 }
 
@@ -471,43 +493,46 @@ body {
     display: flex;
     align-items: center;
     gap: 18px;
-    background: #111;
-    padding: 20px;
-    border-radius: 12px;
+    background: var(--bg-card);
+    padding: 22px;
+    border-radius: 14px;
     border: 1px solid var(--border-color);
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .feature-item:hover {
-    border-color: var(--gold);
+    border-color: var(--gold-subtle);
+    transform: translateY(-4px);
 }
 
 .feature-item i {
     font-size: 2.2rem;
-    color: var(--gold);
+    color: var(--gold-subtle);
 }
 
-/* --- Footer & Botones de Redes Sociales Súper Interactivos --- */
+/* --- Footer --- */
 .footer {
-    background: #040404;
-    padding: 60px 0 25px 0;
+    background: #050304;
+    color: var(--silver);
+    padding: 70px 0 25px 0;
     border-top: 1px solid var(--border-color);
 }
 
 .footer-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 35px;
+    gap: 40px;
     margin-bottom: 45px;
 }
 
 .footer-logo {
-    height: 42px;
+    height: 40px;
     margin-bottom: 15px;
+    display: block;
 }
 
 .footer-col h4 {
-    color: var(--gold);
+    color: var(--gold-subtle);
     margin-bottom: 18px;
     font-family: var(--font-heading);
     letter-spacing: 1px;
@@ -522,16 +547,15 @@ body {
 }
 
 .footer-col a {
-    color: var(--text-gray);
+    color: var(--silver);
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .footer-col a:hover {
-    color: var(--gold);
+    color: var(--gold-subtle);
 }
 
-/* Botones de Redes Sociales Interactivos con Efecto de Colores Corporativos */
 .social-links {
     display: flex;
     gap: 15px;
@@ -540,52 +564,42 @@ body {
 .social-btn {
     width: 45px;
     height: 45px;
-    background: #141414;
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    color: var(--text-white);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    overflow: hidden;
+    color: #ffffff;
+    transition: all 0.4s ease;
 }
 
 .social-btn.facebook:hover {
     background: #1877f2;
-    color: #fff;
-    border-color: #1877f2;
-    transform: translateY(-5px) rotate(8deg);
-    box-shadow: 0 8px 20px rgba(24, 119, 242, 0.5);
+    transform: translateY(-5px);
 }
 
 .social-btn.instagram:hover {
-    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-    color: #fff;
-    border-color: transparent;
-    transform: translateY(-5px) rotate(8deg);
-    box-shadow: 0 8px 20px rgba(214, 36, 159, 0.5);
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    transform: translateY(-5px);
 }
 
 .social-btn.tiktok:hover {
     background: #000000;
-    color: #fff;
-    border-color: #ff0050;
-    transform: translateY(-5px) rotate(8deg);
-    box-shadow: 0 8px 20px rgba(255, 0, 80, 0.5);
+    border: 1px solid #ff0050;
+    transform: translateY(-5px);
 }
 
 .footer-bottom {
     text-align: center;
     padding-top: 25px;
-    border-top: 1px solid #141414;
-    color: var(--text-gray);
+    border-top: 1px solid var(--border-color);
+    color: #807078;
     font-size: 0.85rem;
 }
 
-/* --- Botón Flotante WhatsApp con Animación Pulsante --- */
+/* --- Botón Flotante WhatsApp --- */
 .whatsapp-float {
     position: fixed;
     bottom: 30px;
@@ -601,18 +615,11 @@ body {
     font-size: 2.2rem;
     box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
     z-index: 1500;
-    animation: pulseWhatsapp 2s infinite;
     transition: transform 0.3s;
 }
 
-@keyframes pulseWhatsapp {
-    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-}
-
 .whatsapp-float:hover {
-    transform: scale(1.1) rotate(10deg);
+    transform: scale(1.1);
 }
 
 /* --- Responsive --- */
@@ -624,10 +631,9 @@ body {
         top: 100%;
         left: 0;
         width: 100%;
-        background: var(--bg-header);
+        background: var(--header-bg);
         padding: 20px;
         border-bottom: 1px solid var(--border-color);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.8);
     }
     .navbar.show {
         display: flex;

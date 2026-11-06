@@ -11,7 +11,7 @@ const sampleProducts = [
         categoria: "Relojes",
         marca: "Curren",
         modelo: "CR-8325",
-        precio: "$120.000",
+        precio: "$140.000",
         descripcion: "Reloj táctico deportivo con pulsera de silicona negra, bisel en tono oro rosa y cronógrafo funcional.",
         colores: ["Negro / Oro Rosa"],
         tallas: ["Única"],
@@ -24,7 +24,7 @@ const sampleProducts = [
         categoria: "Relojes",
         marca: "Poedagar",
         modelo: "PD-901",
-        precio: "$130.000",
+        precio: "$160.000",
         descripcion: "Reloj elegante en acero inoxidable con dial azul texturizado e indicador de fecha.",
         colores: ["Plateado / Azul"],
         tallas: ["Única"],
@@ -73,7 +73,7 @@ function renderProducts(products) {
     container.innerHTML = '';
 
     if (products.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-gray); padding: 40px;">No se encontraron productos disponibles.</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--silver); padding: 40px; font-weight: 600;">No se encontraron productos disponibles.</p>`;
         return;
     }
 
