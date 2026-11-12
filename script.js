@@ -2,53 +2,64 @@
    BAZOR - LÓGICA DINÁMICA DEL CATÁLOGO (GOOGLE SHEETS)
    ========================================== */
 
-// Número de WhatsApp configurado para BAZOR
 const PHONE_NUMBER = "573016545328";
 
-// ⚠️ AQUÍ PEGARÁS LA URL QUE TE ENTREGUE GOOGLE APPS SCRIPT CUANDO CONECTEMOS LA HOJA
-const SHEETS_API_URL = ""; 
+// ⚠️ PEGA AQUÍ NUEVAMENTE LA URL DE TU GOOGLE APPS SCRIPT
+const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzbrcrOYEjio7LDyhvIJeMYoB5Yb6X--moKZTBt3krC0Y4kcu_oSoYHdT7rionhxfDW/exec"; 
 
-// Arreglo temporal de respaldo (por si aún no está conectada la hoja, muestra productos de prueba)
-let allProducts = [
-    {
-        id: "1",
-        nombre: "Reloj Curren Chronograph Táctico",
-        categoria: "Relojes",
-        genero: "Hombre",
-        marca: "Curren",
-        modelo: "CR-8325",
-        precio: "$140.000",
-        descripcion: "Reloj táctico deportivo con pulsera de silicona negra.",
-        imagen: "assets/products/reloj-curren.png",
-        estado: "Disponible"
-    },
-    {
-        id: "2",
-        nombre: "Sneakers Nike Dunk Low Retro",
-        categoria: "Sneakers",
-        genero: "Hombre",
-        marca: "Nike",
-        modelo: "Dunk Low",
-        precio: "$280.000",
-        descripcion: "Diseño clásico urbano en cuero sintético blanco y negro.",
-        imagen: "assets/products/sneaker-nike.jpg",
-        estado: "Disponible"
-    }
-];
+let allProducts = [];
 
 let activeCategory = 'Todos';
 let activeGender = 'Todos';
 let activeBrand = 'Todas';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initCatalogControls();
     loadProducts();
     setupNavigation();
     setupSearch();
 });
 
-// Función principal para cargar productos (desde Google Sheets o respaldo)
+// Función para convertir cualquier enlace de Google Drive en una imagen directa que cargue en la web
+function formatDriveImage(url) {
+    if (!url) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
+    
+    const urlStr = url.toString().trim();
+    
+    // Extraer el ID del archivo si es un enlace de Google Drive
+    const match = urlStr.match(/\/d\/([a-zA-Z0-9_-]+)/) || urlStr.match(/id=([a-zA-Z0-9_-]+)/);
+    
+    if (match && match[1]) {
+        // Endpoint de alta velocidad de Google Drive para mostrar imágenes en web
+        return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+    }
+    
+    return urlStr;
+}
+
+// Función para formatear el número a Pesos Colombianos ($160.000)
+function formatCOP(price) {
+    if (!price && price !== 0) return '$0';
+    
+    // Limpiar cualquier símbolo previo y dejar solo los números
+    const numericValue = Number(price.toString().replace(/[^0-9.-]+/g, ""));
+    
+    if (isNaN(numericValue)) return price;
+    
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(numericValue);
+}
+
+// Cargar productos desde Google Sheets
 async function loadProducts() {
+    const container = document.getElementById('products-container');
+    if (container) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--silver-metallic); padding: 40px;">Cargando catálogo...</p>`;
+    }
+
     if (SHEETS_API_URL && SHEETS_API_URL !== "") {
         try {
             const response = await fetch(SHEETS_API_URL);
@@ -57,41 +68,44 @@ async function loadProducts() {
                 allProducts = data;
             }
         } catch (error) {
-            console.error("Error al cargar datos de Google Sheets, usando modo local:", error);
+            console.error("Error al cargar datos de Google Sheets:", error);
         }
     }
     applyFilters();
 }
 
-// Renderizar los productos en la interfaz
+// Renderizar tarjetas de producto
 function renderProducts(products) {
     const container = document.getElementById('products-container');
     if (!container) return;
     
     container.innerHTML = '';
 
-    // Filtrar únicamente los productos que estén Disponibles
-    const availableProducts = products.filter(p => !p.estado || p.estado.toLowerCase() === 'disponible');
+    // Filtrar únicamente productos Disponibles
+    const availableProducts = products.filter(p => !p.estado || p.estado.toString().toLowerCase().trim() === 'disponible');
 
     if (availableProducts.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--silver-metallic, #cbd5e1); padding: 40px; font-weight: 600;">No se encontraron productos disponibles con estos filtros.</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--silver-metallic); padding: 40px; font-weight: 600;">No se encontraron productos disponibles con estos filtros.</p>`;
         return;
     }
 
     availableProducts.forEach(product => {
-        const message = encodeURIComponent(`Hola, estoy interesado en el producto "${product.nombre}" (${product.modelo || ''}) de BAZOR. ¿Me pueden brindar más información?`);
+        const formattedPrice = formatCOP(product.precio);
+        const directImageUrl = formatDriveImage(product.imagen);
+        
+        const message = encodeURIComponent(`Hola, estoy interesado en el producto "${product.nombre}" (${formattedPrice}) de BAZOR. ¿Me pueden brindar más información?`);
         const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${message}`;
 
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
             <div class="product-img-container">
-                <img src="${product.imagen}" alt="${product.nombre}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60'">
+                <img src="${directImageUrl}" alt="${product.nombre}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60'">
             </div>
             <div class="product-details">
-                <span class="product-brand">${product.marca || ''} ${product.genero ? '• ' + product.genero : ''}</span>
+                <span class="product-brand">${product.categoria ? product.categoria : ''} ${product.genero ? '• ' + product.genero : ''}</span>
                 <h3 class="product-title">${product.nombre}</h3>
-                <p class="product-price">${product.precio}</p>
+                <p class="product-price">${formattedPrice}</p>
                 <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
                     <i class="fa-brands fa-whatsapp"></i> Consultar por WhatsApp
                 </a>
@@ -104,17 +118,12 @@ function renderProducts(products) {
 // Filtrar por Categoría (Todos, Sneakers, Relojes)
 function filterCategory(category) {
     activeCategory = category;
+    activeBrand = 'Todas';
     applyFilters();
 
-    // Actualizar botones visuales principales si existen
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        if(btn.textContent.trim().toLowerCase() === category.toLowerCase()) {
-            btn.classList.add('active');
-        } else if(category === 'Todos' && btn.textContent.trim() === 'Todos') {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
+        const btnText = btn.textContent.trim().toLowerCase();
+        btn.classList.toggle('active', btnText === category.toLowerCase());
     });
 }
 
@@ -124,30 +133,26 @@ function filterGender(gender) {
     applyFilters();
 }
 
-// Filtrar por Marca
+// Filtrar por Marca (busca la palabra de la marca dentro del nombre del producto)
 function filterBrand(brand) {
     activeBrand = brand;
     applyFilters();
     scrollToSection('catalogo');
 }
 
-// Aplicar todos los filtros combinados (Categoría, Género, Marca y Buscador)
+// Aplicar todos los filtros
 function applyFilters() {
-    const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
+    const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase().trim() : '';
 
     const filtered = allProducts.filter(p => {
-        const pCat = p.categoria ? p.categoria.trim() : '';
-        const pGen = p.genero ? p.genero.trim() : '';
-        const pBrand = p.marca ? p.marca.trim() : '';
+        const pName = p.nombre ? p.nombre.toString().toLowerCase() : '';
+        const pCat = p.categoria ? p.categoria.toString().trim().toLowerCase() : '';
+        const pGen = p.genero ? p.genero.toString().trim().toLowerCase() : '';
 
-        const matchesCategory = (activeCategory === 'Todos') || (pCat.toLowerCase() === activeCategory.toLowerCase());
-        const matchesGender = (activeGender === 'Todos') || (pGen.toLowerCase() === activeGender.toLowerCase());
-        const matchesBrand = (activeBrand === 'Todas') || (pBrand.toLowerCase() === activeBrand.toLowerCase());
-        
-        const matchesSearch = !searchVal || 
-                              (p.nombre && p.nombre.toLowerCase().includes(searchVal)) || 
-                              (pBrand.toLowerCase().includes(searchVal)) || 
-                              (p.modelo && p.modelo.toLowerCase().includes(searchVal));
+        const matchesCategory = (activeCategory === 'Todos') || (pCat === activeCategory.toLowerCase());
+        const matchesGender = (activeGender === 'Todos') || (pGen === activeGender.toLowerCase());
+        const matchesBrand = (activeBrand === 'Todas') || pName.includes(activeBrand.toLowerCase());
+        const matchesSearch = !searchVal || pName.includes(searchVal);
 
         return matchesCategory && matchesGender && matchesBrand && matchesSearch;
     });
@@ -155,7 +160,6 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-// Configurar buscador en tiempo real
 function setupSearch() {
     const input = document.getElementById('search-input');
     if (input) {
@@ -163,7 +167,6 @@ function setupSearch() {
     }
 }
 
-// Menú móvil responsive
 function setupNavigation() {
     const toggle = document.getElementById('mobile-menu');
     const nav = document.getElementById('navbar');
@@ -175,15 +178,9 @@ function setupNavigation() {
     }
 }
 
-// Desplazamiento suave entre secciones
 function scrollToSection(id) {
     const element = document.getElementById(id);
     if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
     }
-}
-
-// Inicialización de controles adicionales de filtro por género si se requieren en el DOM
-function initCatalogControls() {
-    // Espacio reservado para inyectar selectores de género de manera dinámica si el usuario lo desea luego
 }
