@@ -4,8 +4,8 @@
 
 const PHONE_NUMBER = "573016545328";
 
-// ⚠️ PEGA AQUÍ NUEVAMENTE LA URL DE TU GOOGLE APPS SCRIPT
-const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzbrcrOYEjio7LDyhvIJeMYoB5Yb6X--moKZTBt3krC0Y4kcu_oSoYHdT7rionhxfDW/exec"; 
+// ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw42TWMGX1LlVUd2_61PRGPfGCmKy-X0mllQY-kfVA6tGGCsAWSfF-Ldi_sQKvamz4R/exec"; 
 
 let allProducts = [];
 
@@ -19,28 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
 });
 
-// Función para convertir cualquier enlace de Google Drive en una imagen directa que cargue en la web
+// Función para convertir enlaces de Google Drive en imágenes directas
 function formatDriveImage(url) {
     if (!url) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
     
     const urlStr = url.toString().trim();
-    
-    // Extraer el ID del archivo si es un enlace de Google Drive
     const match = urlStr.match(/\/d\/([a-zA-Z0-9_-]+)/) || urlStr.match(/id=([a-zA-Z0-9_-]+)/);
     
     if (match && match[1]) {
-        // Endpoint de alta velocidad de Google Drive para mostrar imágenes en web
         return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
     }
     
     return urlStr;
 }
 
-// Función para formatear el número a Pesos Colombianos ($160.000)
+// Función para formatear el precio en Pesos Colombianos ($160.000)
 function formatCOP(price) {
     if (!price && price !== 0) return '$0';
     
-    // Limpiar cualquier símbolo previo y dejar solo los números
     const numericValue = Number(price.toString().replace(/[^0-9.-]+/g, ""));
     
     if (isNaN(numericValue)) return price;
@@ -74,14 +70,13 @@ async function loadProducts() {
     applyFilters();
 }
 
-// Renderizar tarjetas de producto
+// Renderizar tarjetas de producto con la nueva columna de talla
 function renderProducts(products) {
     const container = document.getElementById('products-container');
     if (!container) return;
     
     container.innerHTML = '';
 
-    // Filtrar únicamente productos Disponibles
     const availableProducts = products.filter(p => !p.estado || p.estado.toString().toLowerCase().trim() === 'disponible');
 
     if (availableProducts.length === 0) {
@@ -93,7 +88,11 @@ function renderProducts(products) {
         const formattedPrice = formatCOP(product.precio);
         const directImageUrl = formatDriveImage(product.imagen);
         
-        const message = encodeURIComponent(`Hola, estoy interesado en el producto "${product.nombre}" (${formattedPrice}) de BAZOR. ¿Me pueden brindar más información?`);
+        // Incluimos la talla de forma elegante si existe en el registro
+        const tallaText = product.talla ? ` • Talla: ${product.talla}` : '';
+        const subtitleText = `${product.categoria ? product.categoria : ''} ${product.genero ? '• ' + product.genero : ''}${tallaText}`;
+
+        const message = encodeURIComponent(`Hola, estoy interesado en el producto "${product.nombre}"${tallaText} (${formattedPrice}) de BAZOR. ¿Me pueden brindar más información?`);
         const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${message}`;
 
         const card = document.createElement('div');
@@ -103,7 +102,7 @@ function renderProducts(products) {
                 <img src="${directImageUrl}" alt="${product.nombre}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60'">
             </div>
             <div class="product-details">
-                <span class="product-brand">${product.categoria ? product.categoria : ''} ${product.genero ? '• ' + product.genero : ''}</span>
+                <span class="product-brand">${subtitleText}</span>
                 <h3 class="product-title">${product.nombre}</h3>
                 <p class="product-price">${formattedPrice}</p>
                 <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
@@ -115,7 +114,7 @@ function renderProducts(products) {
     });
 }
 
-// Filtrar por Categoría (Todos, Sneakers, Relojes)
+// Filtrar por Categoría
 function filterCategory(category) {
     activeCategory = category;
     activeBrand = 'Todas';
@@ -127,20 +126,20 @@ function filterCategory(category) {
     });
 }
 
-// Filtrar por Género (Hombre / Mujer)
+// Filtrar por Género
 function filterGender(gender) {
     activeGender = gender;
     applyFilters();
 }
 
-// Filtrar por Marca (busca la palabra de la marca dentro del nombre del producto)
+// Filtrar por Marca
 function filterBrand(brand) {
     activeBrand = brand;
     applyFilters();
     scrollToSection('catalogo');
 }
 
-// Aplicar todos los filtros
+// Aplicar filtros combinados
 function applyFilters() {
     const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase().trim() : '';
 
@@ -148,11 +147,13 @@ function applyFilters() {
         const pName = p.nombre ? p.nombre.toString().toLowerCase() : '';
         const pCat = p.categoria ? p.categoria.toString().trim().toLowerCase() : '';
         const pGen = p.genero ? p.genero.toString().trim().toLowerCase() : '';
+        const pTalla = p.talla ? p.talla.toString().toLowerCase() : '';
 
         const matchesCategory = (activeCategory === 'Todos') || (pCat === activeCategory.toLowerCase());
         const matchesGender = (activeGender === 'Todos') || (pGen === activeGender.toLowerCase());
         const matchesBrand = (activeBrand === 'Todas') || pName.includes(activeBrand.toLowerCase());
-        const matchesSearch = !searchVal || pName.includes(searchVal);
+        
+        const matchesSearch = !searchVal || pName.includes(searchVal) || pTalla.includes(searchVal);
 
         return matchesCategory && matchesGender && matchesBrand && matchesSearch;
     });
