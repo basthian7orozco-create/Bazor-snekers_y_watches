@@ -1,10 +1,10 @@
 /* ==========================================
-   BAZOR - LÓGICA DINÁMICA DEL CATÁLOGO & INTERACTIVIDAD 3D
+   BAZOR - LÓGICA DINÁMICA DEL CATÁLOGO (GOOGLE SHEETS)
    ========================================== */
 
 const PHONE_NUMBER = "573016545328";
 
-// ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS
+// ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
 const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw42TWMGX1LlVUd2_61PRGPfGCmKy-X0mllQY-kfVA6tGGCsAWSfF-Ldi_sQKvamz4R/exec"; 
 
 let allProducts = [];
@@ -14,39 +14,10 @@ let activeGender = 'Todos';
 let activeBrand = 'Todas';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initInteractiveLogos();
     loadProducts();
     setupNavigation();
     setupSearch();
 });
-
-// Interactividad 3D al mover el mouse en los logos de BAZOR
-function initInteractiveLogos() {
-    const logos = document.querySelectorAll('.bazor-logo-anim');
-    
-    logos.forEach(wrapper => {
-        const img = wrapper.querySelector('img');
-        if (!img) return;
-
-        wrapper.addEventListener('mousemove', (e) => {
-            const rect = wrapper.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = ((y - centerY) / centerY) * -18;
-            const rotateY = ((x - centerX) / centerX) * 18;
-
-            img.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.06)`;
-        });
-
-        wrapper.addEventListener('mouseleave', () => {
-            img.style.transform = '';
-        });
-    });
-}
 
 // Función para convertir enlaces de Google Drive en imágenes directas
 function formatDriveImage(url) {
@@ -99,7 +70,7 @@ async function loadProducts() {
     applyFilters();
 }
 
-// Renderizar tarjetas de producto con soporte para columna de talla independiente
+// Renderizar tarjetas de producto con la nueva columna de talla
 function renderProducts(products) {
     const container = document.getElementById('products-container');
     if (!container) return;
@@ -117,6 +88,7 @@ function renderProducts(products) {
         const formattedPrice = formatCOP(product.precio);
         const directImageUrl = formatDriveImage(product.imagen);
         
+        // Incluimos la talla de forma elegante si existe en el registro
         const tallaText = product.talla ? ` • Talla: ${product.talla}` : '';
         const subtitleText = `${product.categoria ? product.categoria : ''} ${product.genero ? '• ' + product.genero : ''}${tallaText}`;
 
