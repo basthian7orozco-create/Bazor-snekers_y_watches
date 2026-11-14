@@ -5,7 +5,7 @@
 const PHONE_NUMBER = "573016545328";
 
 // ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS
-const SHEETS_API_URL = ""; 
+const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw42TWMGX1LlVUd2_61PRGPfGCmKy-X0mllQY-kfVA6tGGCsAWSfF-Ldi_sQKvamz4R/exec"; 
 
 let allProducts = [];
 
