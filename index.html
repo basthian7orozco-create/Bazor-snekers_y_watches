@@ -96,12 +96,17 @@
             <div class="catalog-controls">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search-input" placeholder="Buscar por nombre, marca o modelo...">
+                    <input type="text" id="search-input" placeholder="Buscar por nombre, marca, género o talla...">
                 </div>
                 <div class="filter-buttons">
-                    <button class="filter-btn active" onclick="filterCategory('Todos')">Todos</button>
-                    <button class="filter-btn" onclick="filterCategory('Sneakers')">Sneakers</button>
-                    <button class="filter-btn" onclick="filterCategory('Relojes')">Relojes</button>
+                    <button class="filter-btn cat-btn active" onclick="filterCategory('Todos')">Todos</button>
+                    <button class="filter-btn cat-btn" onclick="filterCategory('Sneakers')">Sneakers</button>
+                    <button class="filter-btn cat-btn" onclick="filterCategory('Relojes')">Relojes</button>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn gen-btn active" onclick="filterGender('Todos')">Todos</button>
+                    <button class="filter-btn gen-btn" onclick="filterGender('Hombre')">Hombre</button>
+                    <button class="filter-btn gen-btn" onclick="filterGender('Mujer')">Mujer</button>
                 </div>
             </div>
 

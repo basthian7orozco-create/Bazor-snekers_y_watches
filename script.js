@@ -120,7 +120,7 @@ function filterCategory(category) {
     activeBrand = 'Todas';
     applyFilters();
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    document.querySelectorAll('.cat-btn').forEach(btn => {
         const btnText = btn.textContent.trim().toLowerCase();
         btn.classList.toggle('active', btnText === category.toLowerCase());
     });
@@ -130,6 +130,11 @@ function filterCategory(category) {
 function filterGender(gender) {
     activeGender = gender;
     applyFilters();
+
+    document.querySelectorAll('.gen-btn').forEach(btn => {
+        const btnText = btn.textContent.trim().toLowerCase();
+        btn.classList.toggle('active', btnText === gender.toLowerCase());
+    });
 }
 
 // Filtrar por Marca
@@ -139,21 +144,31 @@ function filterBrand(brand) {
     scrollToSection('catalogo');
 }
 
+// Normalizar texto (minúsculas y sin tildes)
+function normalizeText(str) {
+    return str ? str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : '';
+}
+
 // Aplicar filtros combinados
 function applyFilters() {
-    const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase().trim() : '';
+    const rawSearch = document.getElementById('search-input') ? document.getElementById('search-input').value : '';
+    const searchTerms = normalizeText(rawSearch).split(/\s+/).filter(Boolean);
 
     const filtered = allProducts.filter(p => {
-        const pName = p.nombre ? p.nombre.toString().toLowerCase() : '';
-        const pCat = p.categoria ? p.categoria.toString().trim().toLowerCase() : '';
-        const pGen = p.genero ? p.genero.toString().trim().toLowerCase() : '';
-        const pTalla = p.talla ? p.talla.toString().toLowerCase() : '';
+        const pName = normalizeText(p.nombre);
+        const pCat = normalizeText(p.categoria);
+        const pGen = normalizeText(p.genero);
+        const pTalla = normalizeText(p.talla);
+        const pMarca = normalizeText(p.marca);
 
-        const matchesCategory = (activeCategory === 'Todos') || (pCat === activeCategory.toLowerCase());
-        const matchesGender = (activeGender === 'Todos') || (pGen === activeGender.toLowerCase());
-        const matchesBrand = (activeBrand === 'Todas') || pName.includes(activeBrand.toLowerCase());
-        
-        const matchesSearch = !searchVal || pName.includes(searchVal) || pTalla.includes(searchVal);
+        const matchesCategory = (activeCategory === 'Todos') || (pCat === normalizeText(activeCategory));
+        const targetGen = normalizeText(activeGender);
+        const matchesGender = (activeGender === 'Todos') || (pGen === targetGen) || (pGen === 'unisex');
+        const targetBrand = normalizeText(activeBrand);
+        const matchesBrand = (activeBrand === 'Todas') || pName.includes(targetBrand) || pMarca.includes(targetBrand);
+
+        const combinedProductText = `${pName} ${pCat} ${pGen} ${pTalla} ${pMarca}`;
+        const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => combinedProductText.includes(term));
 
         return matchesCategory && matchesGender && matchesBrand && matchesSearch;
     });
