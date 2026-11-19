@@ -200,3 +200,34 @@ function scrollToSection(id) {
         element.scrollIntoView({ behavior: 'smooth' });
     }
 }
+
+// ==========================================
+// FUNCIONES DE LA GUÍA DE TALLAS
+// ==========================================
+function openSizeGuide() {
+    const modal = document.getElementById('size-guide-modal');
+    if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeSizeGuide() {
+    const modal = document.getElementById('size-guide-modal');
+    if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+}
+
+function closeSizeGuideOutside(event) {
+    if (event.target.id === 'size-guide-modal') {
+        closeSizeGuide();
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeSizeGuide();
+    }
+});

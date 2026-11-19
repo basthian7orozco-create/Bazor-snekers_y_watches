@@ -31,6 +31,7 @@
                 <a href="#catalogo" class="nav-link">Catálogo</a>
                 <a href="#catalogo" class="nav-link" onclick="filterCategory('Sneakers')">Sneakers</a>
                 <a href="#catalogo" class="nav-link" onclick="filterCategory('Relojes')">Relojes</a>
+                <a href="javascript:void(0)" class="nav-link" onclick="openSizeGuide()"><i class="fa-solid fa-ruler-horizontal"></i> Guía de Tallas</a>
                 <a href="#marcas" class="nav-link">Marcas</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
             </nav>
@@ -108,6 +109,9 @@
                     <button class="filter-btn gen-btn" onclick="filterGender('Hombre')">Hombre</button>
                     <button class="filter-btn gen-btn" onclick="filterGender('Mujer')">Mujer</button>
                 </div>
+                <button class="btn-size-guide" onclick="openSizeGuide()">
+                    <i class="fa-solid fa-ruler-combined"></i> Consulta tu talla
+                </button>
             </div>
 
             <!-- Grilla de Productos -->
@@ -163,6 +167,7 @@
                 <ul>
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#catalogo">Catálogo</a></li>
+                    <li><a href="javascript:void(0)" onclick="openSizeGuide()">Guía de Tallas (COL / EUR / US / CM)</a></li>
                     <li><a href="#marcas">Marcas</a></li>
                 </ul>
             </div>
@@ -184,6 +189,26 @@
             <p>&copy; 2026 BAZOR. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- Modal / Ventana Emergente de Guía de Tallas -->
+    <div id="size-guide-modal" class="size-modal" onclick="closeSizeGuideOutside(event)">
+        <div class="size-modal-content">
+            <button class="size-modal-close" onclick="closeSizeGuide()" title="Cerrar">&times;</button>
+            <div class="size-modal-header">
+                <h3><i class="fa-solid fa-ruler-combined"></i> GUÍA DE TALLAS BAZOR</h3>
+                <p>Equivalencias oficiales: Colombia (COL) • Europea (EUR) • Americana (US) • Centímetros (CM)</p>
+            </div>
+            <div class="size-modal-body">
+                <img src="assets/Guia_de_tallas.png" alt="Guía de Tallas BAZOR COL EUR US CM" class="size-guide-img">
+            </div>
+            <div class="size-modal-footer">
+                <span>¿Aún tienes dudas con tu talla?</span>
+                <a href="https://wa.me/573016545328?text=Hola%20BAZOR,%20necesito%20ayuda%20para%20confirmar%20mi%20talla%20en%20unos%20tenis." target="_blank" class="btn-modal-wa">
+                    <i class="fa-brands fa-whatsapp"></i> Asesoría de talla por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Botón Flotante de WhatsApp -->
     <a href="https://wa.me/573016545328?text=Hola,%20quisiera%20recibir%20asesor%C3%3A%20sobre%20los%20productos%20de%20BAZOR." target="_blank" class="whatsapp-float" title="Contactar por WhatsApp">
