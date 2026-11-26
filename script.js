@@ -3,7 +3,7 @@
    ========================================== */
 
 const PHONE_NUMBER = "573016545328";
-const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw42TWMGX1LlVUd2_61PRGPfGCmKy-X0mllQY-kfVA6tGGCsAWSfF-Ldi_sQKvamz4R/exec";
+const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycby2_WkEpYniu-nNVr1a1oIm9sPA5fvfcL5qoVultlH_5yj9Dt83_wtLqBbkqGNYCXZ-/exec";
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80";
 
 const SAMPLE_PRODUCTS = [
@@ -77,7 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
 });
 
-/* Lee campos del JSON de Google Sheets sin importar mayúsculas o espacios */
+function normalizeKey(str) {
+    return (str || '')
+        .toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .trim();
+}
+
+/* Lee campos del JSON de Google Sheets sin importar mayúsculas, tildes o símbolos */
 function getField(product, keys) {
     if (!product) return '';
     for (const key of keys) {
@@ -85,14 +96,14 @@ function getField(product, keys) {
             return product[key];
         }
     }
-    const lowerMap = {};
+    const normMap = {};
     Object.keys(product).forEach(k => {
-        lowerMap[k.toLowerCase().replace(/\s+/g, '_').trim()] = product[k];
+        normMap[normalizeKey(k)] = product[k];
     });
     for (const key of keys) {
-        const normKey = key.toLowerCase().replace(/\s+/g, '_').trim();
-        if (lowerMap[normKey] !== undefined && lowerMap[normKey] !== null && String(lowerMap[normKey]).trim() !== '') {
-            return lowerMap[normKey];
+        const nk = normalizeKey(key);
+        if (normMap[nk] !== undefined && normMap[nk] !== null && String(normMap[nk]).trim() !== '') {
+            return normMap[nk];
         }
     }
     return '';
@@ -118,28 +129,159 @@ function handleBrandLogoError(imgElement, brandLabel) {
     }
 }
 
+function extractDriveId(urlStr) {
+    if (!urlStr) return '';
+    const match = urlStr.match(/\/d\/([a-zA-Z0-9_-]+)/) || urlStr.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    return match && match[1] ? match[1] : '';
+}
+
+function extractYouTubeId(urlStr) {
+    if (!urlStr) return '';
+    const match = urlStr.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+    return match && match[1] ? match[1] : '';
+}
+
+function isDirectVideoFile(urlStr) {
+    return /\.(mp4|webm|mov|m4v|ogg)(\?|#|$)/i.test(urlStr);
+}
+
 function formatDriveImage(url) {
     if (!url) return FALLBACK_IMAGE;
     const urlStr = url.toString().trim();
     if (!urlStr) return FALLBACK_IMAGE;
 
-    const match = urlStr.match(/\/d\/([a-zA-Z0-9_-]+)/) || urlStr.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-        return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+    const driveId = extractDriveId(urlStr);
+    if (driveId) {
+        return `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
     }
     return urlStr;
 }
 
-function getProductImages(product) {
-    const raw = getField(product, ['imagen', 'imagenes', 'fotos', 'foto']);
-    const parts = raw
+function parseMediaItem(rawUrl, forceVideo = false) {
+    let urlStr = (rawUrl || '').toString().trim();
+    if (!urlStr) {
+        return { type: 'image', src: FALLBACK_IMAGE, thumb: FALLBACK_IMAGE, isVideo: false };
+    }
+
+    let explicitVideo = forceVideo;
+    if (/^video\s*:\s*/i.test(urlStr)) {
+        explicitVideo = true;
+        urlStr = urlStr.replace(/^video\s*:\s*/i, '').trim();
+    }
+
+    const ytId = extractYouTubeId(urlStr);
+    if (ytId) {
+        return {
+            type: 'iframe',
+            src: `https://www.youtube.com/embed/${ytId}?rel=0`,
+            thumb: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
+            isVideo: true
+        };
+    }
+
+    if (isDirectVideoFile(urlStr)) {
+        return {
+            type: 'video',
+            src: urlStr,
+            thumb: FALLBACK_IMAGE,
+            isVideo: true
+        };
+    }
+
+    const driveId = extractDriveId(urlStr);
+    if (driveId) {
+        const thumbUrl = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
+        if (explicitVideo) {
+            return {
+                type: 'iframe',
+                src: `https://drive.google.com/file/d/${driveId}/preview`,
+                thumb: thumbUrl,
+                isVideo: true
+            };
+        }
+        return {
+            type: 'image',
+            src: thumbUrl,
+            thumb: thumbUrl,
+            isVideo: false
+        };
+    }
+
+    return {
+        type: 'image',
+        src: urlStr,
+        thumb: urlStr,
+        isVideo: false
+    };
+}
+
+function getProductMedia(product) {
+    const imgRaw = getField(product, ['imagen', 'imagen | video', 'imagenes', 'fotos', 'foto']);
+    const vidRaw = getField(product, ['video', 'videos']);
+
+    const imgItems = imgRaw
         .toString()
         .split(/[\n,|]+/)
         .map(item => item.trim())
         .filter(Boolean)
-        .map(formatDriveImage);
+        .map(url => parseMediaItem(url, false));
 
-    return parts.length > 0 ? parts : [FALLBACK_IMAGE];
+    const vidItems = vidRaw
+        .toString()
+        .split(/[\n,|]+/)
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(url => parseMediaItem(url, true));
+
+    const combined = [...imgItems, ...vidItems];
+    if (combined.length === 0) {
+        return [{ type: 'image', src: FALLBACK_IMAGE, thumb: FALLBACK_IMAGE, isVideo: false }];
+    }
+    return combined;
+}
+
+function getProductImages(product) {
+    return getProductMedia(product).map(item => item.thumb || item.src || FALLBACK_IMAGE);
+}
+
+function renderMediaElement(media, altText, className, onClickHandler, isCard = false) {
+    if (!media) {
+        return `<img src="${FALLBACK_IMAGE}" alt="${escapeHTML(altText)}" class="${className}" ${onClickHandler ? `onclick="${onClickHandler}"` : ''}>`;
+    }
+
+    if (media.type === 'video') {
+        return `
+            <video
+                src="${escapeHTML(media.src)}"
+                class="${className}"
+                ${isCard ? 'autoplay loop muted playsinline' : 'controls autoplay playsinline'}
+                ${onClickHandler ? `onclick="${onClickHandler}"` : ''}
+            ></video>
+        `;
+    }
+
+    if (media.type === 'iframe') {
+        return `
+            <iframe
+                src="${escapeHTML(media.src)}"
+                class="${className} media-iframe"
+                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title="${escapeHTML(altText)}"
+            ></iframe>
+        `;
+    }
+
+    return `
+        <img
+            src="${escapeHTML(media.src)}"
+            alt="${escapeHTML(altText)}"
+            class="${className}"
+            ${onClickHandler ? `onclick="${onClickHandler}"` : ''}
+            onerror="this.src='${FALLBACK_IMAGE}'"
+        >
+    `;
 }
 
 function getImageCaptions(product, totalImages) {
@@ -236,7 +378,7 @@ async function loadProducts() {
 
     if (SHEETS_API_URL && SHEETS_API_URL.trim() !== "") {
         try {
-            const response = await fetch(SHEETS_API_URL);
+            const response = await fetch(SHEETS_API_URL, { cache: "no-store" });
             const data = await response.json();
             if (Array.isArray(data) && data.length > 0) {
                 allProducts = data;
@@ -284,9 +426,10 @@ function renderProducts(products) {
         const calidad = getField(product, ['calidad']);
 
         const key = getField(product, ['id']) ? String(getField(product, ['id'])) : `idx-${idx}`;
-        const images = getProductImages(product);
+        const mediaList = getProductMedia(product);
         const activeImgIndex = cardImageIndexes.get(key) || 0;
-        const safeImgIndex = activeImgIndex < images.length ? activeImgIndex : 0;
+        const safeImgIndex = activeImgIndex < mediaList.length ? activeImgIndex : 0;
+        const currentMedia = mediaList[safeImgIndex];
 
         const discount = getDiscountInfo(product);
         const qualityBadge = getQualityBadgeHTML(calidad);
@@ -300,12 +443,12 @@ function renderProducts(products) {
         );
         const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${waMsg}`;
 
-        const multiPhotoControls = images.length > 1 ? `
-            <button type="button" class="card-img-nav prev" onclick="cycleCardImage('${key}', ${images.length}, -1, event)" title="Foto anterior">&#10094;</button>
-            <button type="button" class="card-img-nav next" onclick="cycleCardImage('${key}', ${images.length}, 1, event)" title="Siguiente foto">&#10095;</button>
+        const multiPhotoControls = mediaList.length > 1 ? `
+            <button type="button" class="card-img-nav prev" onclick="cycleCardImage('${key}', ${mediaList.length}, -1, event)" title="Vista anterior">&#10094;</button>
+            <button type="button" class="card-img-nav next" onclick="cycleCardImage('${key}', ${mediaList.length}, 1, event)" title="Siguiente vista">&#10095;</button>
             <div class="card-dots">
-                ${images.map((_, dIdx) => `
-                    <button type="button" class="card-dot ${dIdx === safeImgIndex ? 'active' : ''}" onclick="setCardImage('${key}', ${dIdx}, event)" aria-label="Foto ${dIdx + 1}"></button>
+                ${mediaList.map((m, dIdx) => `
+                    <button type="button" class="card-dot ${m.isVideo ? 'is-video-dot' : ''} ${dIdx === safeImgIndex ? 'active' : ''}" onclick="setCardImage('${key}', ${dIdx}, event)" aria-label="Vista ${dIdx + 1}"></button>
                 `).join('')}
             </div>
         ` : '';
@@ -324,12 +467,21 @@ function renderProducts(products) {
                 </div>
             `;
 
+        const mediaHtml = renderMediaElement(
+            currentMedia,
+            nombre,
+            'product-img',
+            currentMedia.type !== 'iframe' ? `openProductDetailByIndex(${idx})` : null,
+            true
+        );
+
         const card = document.createElement('article');
         card.className = 'product-card';
         card.innerHTML = `
             <div class="product-img-container">
                 ${discount.hasDiscount ? `<span class="discount-pill">-${discount.percentage}%</span>` : ''}
-                <img src="${images[safeImgIndex]}" alt="${escapeHTML(nombre)}" class="product-img" onclick="openProductDetailByIndex(${idx})" onerror="this.src='${FALLBACK_IMAGE}'">
+                ${currentMedia.isVideo ? `<span class="video-pill"><i class="fa-solid fa-play"></i> VIDEO</span>` : ''}
+                ${mediaHtml}
                 ${multiPhotoControls}
             </div>
             <div class="product-details">
@@ -377,6 +529,46 @@ function openProductDetailByIndex(index) {
     }
 }
 
+function setModalMainMedia(media, nombre, captionText, discountBadge) {
+    const wrap = document.querySelector('.detail-main-img-wrap');
+    const captionEl = document.getElementById('detail-img-caption');
+    if (!wrap) return;
+
+    const existingMedia = wrap.querySelector('#detail-main-img');
+    if (existingMedia) existingMedia.remove();
+
+    let el;
+    if (media.type === 'video') {
+        el = document.createElement('video');
+        el.id = 'detail-main-img';
+        el.src = media.src;
+        el.controls = true;
+        el.autoplay = true;
+        el.playsInline = true;
+    } else if (media.type === 'iframe') {
+        el = document.createElement('iframe');
+        el.id = 'detail-main-img';
+        el.src = media.src;
+        el.className = 'media-iframe';
+        el.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+        el.allowFullscreen = true;
+        el.title = nombre || 'Video del producto';
+    } else {
+        el = document.createElement('img');
+        el.id = 'detail-main-img';
+        el.src = media.src || FALLBACK_IMAGE;
+        el.alt = nombre || 'Producto';
+        el.onerror = () => { el.src = FALLBACK_IMAGE; };
+    }
+
+    wrap.insertBefore(el, discountBadge || null);
+    if (captionEl) {
+        captionEl.textContent = media.isVideo
+            ? `${captionText ? captionText + ' • ' : ''}Video del producto`
+            : (captionText || '');
+    }
+}
+
 function openProductDetail(product) {
     currentModalProduct = product;
 
@@ -390,19 +582,12 @@ function openProductDetail(product) {
     const talla = getField(product, ['talla', 'tallas']);
     const calidad = getField(product, ['calidad']);
 
-    const images = getProductImages(product);
-    const captions = getImageCaptions(product, images.length);
+    const mediaList = getProductMedia(product);
+    const captions = getImageCaptions(product, mediaList.length);
     const discount = getDiscountInfo(product);
 
-    const mainImg = document.getElementById('detail-main-img');
-    const captionEl = document.getElementById('detail-img-caption');
     const thumbsContainer = document.getElementById('detail-thumbs');
     const discountBadge = document.getElementById('detail-discount-badge');
-
-    mainImg.src = images[0];
-    mainImg.alt = nombre || 'Producto';
-    mainImg.onerror = () => { mainImg.src = FALLBACK_IMAGE; };
-    captionEl.textContent = captions[0] || '';
 
     if (discount.hasDiscount) {
         discountBadge.style.display = 'inline-block';
@@ -411,22 +596,37 @@ function openProductDetail(product) {
         discountBadge.style.display = 'none';
     }
 
+    setModalMainMedia(mediaList[0], nombre, captions[0] || '', discountBadge);
+
     thumbsContainer.innerHTML = '';
-    if (images.length > 1) {
-        images.forEach((imgUrl, idx) => {
+    if (mediaList.length > 1) {
+        mediaList.forEach((mediaItem, idx) => {
+            const thumbWrapper = document.createElement('div');
+            thumbWrapper.className = `detail-thumb-item ${idx === 0 ? 'active' : ''}`;
+            thumbWrapper.title = captions[idx] || `${nombre} vista ${idx + 1}`;
+
             const thumb = document.createElement('img');
-            thumb.src = imgUrl;
+            thumb.src = mediaItem.thumb || FALLBACK_IMAGE;
             thumb.alt = captions[idx] || `${nombre} vista ${idx + 1}`;
-            thumb.title = captions[idx] || '';
-            thumb.className = `detail-thumb-img ${idx === 0 ? 'active' : ''}`;
+            thumb.className = 'detail-thumb-img';
             thumb.onerror = () => { thumb.src = FALLBACK_IMAGE; };
-            thumb.onclick = () => {
-                mainImg.src = imgUrl;
-                captionEl.textContent = captions[idx] || '';
-                thumbsContainer.querySelectorAll('img').forEach(el => el.classList.remove('active'));
-                thumb.classList.add('active');
+
+            thumbWrapper.appendChild(thumb);
+
+            if (mediaItem.isVideo) {
+                const badge = document.createElement('span');
+                badge.className = 'thumb-video-badge';
+                badge.innerHTML = '<i class="fa-solid fa-play"></i>';
+                thumbWrapper.appendChild(badge);
+            }
+
+            thumbWrapper.onclick = () => {
+                setModalMainMedia(mediaItem, nombre, captions[idx] || '', discountBadge);
+                thumbsContainer.querySelectorAll('.detail-thumb-item').forEach(el => el.classList.remove('active'));
+                thumbWrapper.classList.add('active');
             };
-            thumbsContainer.appendChild(thumb);
+
+            thumbsContainer.appendChild(thumbWrapper);
         });
     }
 
@@ -588,6 +788,8 @@ function renderRelatedProducts(currentProduct) {
 function closeProductDetail() {
     const modal = document.getElementById('product-detail-modal');
     if (modal) {
+        const activeVideo = modal.querySelector('video');
+        if (activeVideo) activeVideo.pause();
         modal.classList.remove('open');
         document.body.style.overflow = '';
     }
