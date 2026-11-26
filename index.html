@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAZOR | Sneakers & Watches</title>
-    <!-- Google Fonts -->
+    <title>BAZOR | Sneakers, Watches, Fragrances & Bags</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Hojas de estilo -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -23,14 +20,16 @@
     <!-- Encabezado / Navegación -->
     <header class="header">
         <div class="header-container">
-            <a href="#" class="logo-link">
+            <a href="#inicio" class="logo-link">
                 <img src="assets/logo-bazor.png" alt="BAZOR Logo" class="logo-img">
             </a>
             <nav class="navbar" id="navbar">
                 <a href="#inicio" class="nav-link active">Inicio</a>
-                <a href="#catalogo" class="nav-link">Catálogo</a>
-                <a href="#catalogo" class="nav-link" onclick="filterCategory('Sneakers')">Sneakers</a>
-                <a href="#catalogo" class="nav-link" onclick="filterCategory('Relojes')">Relojes</a>
+                <a href="#catalogo" class="nav-link" onclick="resetFiltersAndScroll()">Catálogo</a>
+                <a href="#catalogo" class="nav-link" onclick="filterCategory('Sneakers'); scrollToSection('catalogo');">Sneakers</a>
+                <a href="#catalogo" class="nav-link" onclick="filterCategory('Relojes'); scrollToSection('catalogo');">Relojes</a>
+                <a href="#catalogo" class="nav-link" onclick="filterCategory('Lociones'); scrollToSection('catalogo');">Lociones</a>
+                <a href="#catalogo" class="nav-link" onclick="filterCategory('Bolsos'); scrollToSection('catalogo');">Bolsos</a>
                 <a href="javascript:void(0)" class="nav-link" onclick="openSizeGuide()"><i class="fa-solid fa-ruler-horizontal"></i> Guía de Tallas</a>
                 <a href="#marcas" class="nav-link">Marcas</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
@@ -41,7 +40,7 @@
         </div>
     </header>
 
-    <!-- Sección Hero (Portada con Sneaker Nike y Fondo Borgoña Difuminado) -->
+    <!-- Sección Hero Limpia -->
     <section id="inicio" class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -70,20 +69,60 @@
                     <span class="btn-text">VER RELOJES <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </div>
+            <div class="category-card cat-fragrances" onclick="filterCategory('Lociones'); scrollToSection('catalogo');">
+                <div class="category-overlay"></div>
+                <div class="category-info">
+                    <h3>LOCIONES</h3>
+                    <p>Fragancias con carácter y presencia para cada ocasión.</p>
+                    <span class="btn-text">VER LOCIONES <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="category-card cat-bags" onclick="filterCategory('Bolsos'); scrollToSection('catalogo');">
+                <div class="category-overlay"></div>
+                <div class="category-info">
+                    <h3>BOLSOS</h3>
+                    <p>Estilo urbano, funcionalidad y acabados de primera.</p>
+                    <span class="btn-text">VER BOLSOS <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Sección de Marcas -->
+    <!-- Sección de Marcas Destacadas con Logotipos (.jpg) -->
     <section id="marcas" class="brands-section">
         <div class="container">
             <h2 class="section-title">MARCAS DESTACADAS</h2>
-            <div class="brands-grid">
-                <div class="brand-item" onclick="filterBrand('Nike')"><span>NIKE</span></div>
-                <div class="brand-item" onclick="filterBrand('Adidas')"><span>ADIDAS</span></div>
-                <div class="brand-item" onclick="filterBrand('Puma')"><span>PUMA</span></div>
-                <div class="brand-item" onclick="filterBrand('New Balance')"><span>NEW BALANCE</span></div>
-                <div class="brand-item" onclick="filterBrand('Curren')"><span>CURREN</span></div>
-                <div class="brand-item" onclick="filterBrand('Poedagar')"><span>POEDAGAR</span></div>
+            <div class="brands-grid" id="brands-logo-grid">
+                <button type="button" class="brand-logo-card" data-brand="Adidas" onclick="filterBrand('Adidas')" title="Adidas">
+                    <img src="imagenes/adidas.jpg" alt="Adidas" data-candidates="imagenes/adidas.jpg,imagenes/adidas.png,imagenes/adidas.jpeg,imagenes/adidas.webp" onerror="handleBrandLogoError(this, 'ADIDAS')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Casio" onclick="filterBrand('Casio')" title="Casio">
+                    <img src="imagenes/cosio.jpg" alt="Casio" data-candidates="imagenes/cosio.jpg,imagenes/casio.jpg,imagenes/cosio.png,imagenes/casio.png" onerror="handleBrandLogoError(this, 'CASIO')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Curren" onclick="filterBrand('Curren')" title="Curren">
+                    <img src="imagenes/curren.jpg" alt="Curren" data-candidates="imagenes/curren.jpg,imagenes/curren.png,imagenes/curren.jpeg,imagenes/curren.webp" onerror="handleBrandLogoError(this, 'CURREN')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Fossil" onclick="filterBrand('Fossil')" title="Fossil">
+                    <img src="imagenes/fossil.jpg" alt="Fossil" data-candidates="imagenes/fossil.jpg,imagenes/fossil.png,imagenes/fossil.jpeg,imagenes/fossil.webp" onerror="handleBrandLogoError(this, 'FOSSIL')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Guess" onclick="filterBrand('Guess')" title="Guess">
+                    <img src="imagenes/guess.jpg" alt="Guess" data-candidates="imagenes/guess.jpg,imagenes/guess.png,imagenes/guess.jpeg,imagenes/guess.webp" onerror="handleBrandLogoError(this, 'GUESS')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Jordan" onclick="filterBrand('Jordan')" title="Jordan">
+                    <img src="imagenes/jordan.jpg" alt="Jordan" data-candidates="imagenes/jordan.jpg,imagenes/jordan.png,imagenes/jordan.jpeg,imagenes/jordan.webp" onerror="handleBrandLogoError(this, 'JORDAN')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="New Balance" onclick="filterBrand('New Balance')" title="New Balance">
+                    <img src="imagenes/new balance.jpg" alt="New Balance" data-candidates="imagenes/new balance.jpg,imagenes/new-balance.jpg,imagenes/new balance.png,imagenes/new-balance.png" onerror="handleBrandLogoError(this, 'NEW BALANCE')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Nike" onclick="filterBrand('Nike')" title="Nike">
+                    <img src="imagenes/nike.jpg" alt="Nike" data-candidates="imagenes/nike.jpg,imagenes/nike.png,imagenes/nike.jpeg,imagenes/nike.webp" onerror="handleBrandLogoError(this, 'NIKE')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Poedagar" onclick="filterBrand('Poedagar')" title="Poedagar">
+                    <img src="imagenes/poedagar.jpg" alt="Poedagar" data-candidates="imagenes/poedagar.jpg,imagenes/poedagar.png,imagenes/poedagar.jpeg,imagenes/poedagar.webp" onerror="handleBrandLogoError(this, 'POEDAGAR')">
+                </button>
+                <button type="button" class="brand-logo-card" data-brand="Puma" onclick="filterBrand('Puma')" title="Puma">
+                    <img src="imagenes/puma.jpg" alt="Puma" data-candidates="imagenes/puma.jpg,imagenes/puma.png,imagenes/puma.jpeg,imagenes/puma.webp" onerror="handleBrandLogoError(this, 'PUMA')">
+                </button>
             </div>
         </div>
     </section>
@@ -91,33 +130,60 @@
     <!-- Sección del Catálogo -->
     <section id="catalogo" class="catalog-section">
         <div class="container">
-            <h2 class="section-title">CATÁLOGO EXCLUSIVO</h2>
-            
-            <!-- Buscador y Filtros -->
+            <h2 class="section-title">CATÁLOGO BAZOR</h2>
+            <p class="catalog-subtitle">Consulta el catálogo disponible • Opciones en calidad Original, 1.1 y AAA</p>
+
             <div class="catalog-controls">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search-input" placeholder="Buscar por nombre, marca, género o talla...">
+                    <input type="text" id="search-input" placeholder="Buscar por nombre, marca, calidad, género o talla...">
                 </div>
+
+                <!-- Filtro Categoría -->
                 <div class="filter-buttons">
-                    <button class="filter-btn cat-btn active" onclick="filterCategory('Todos')">Todos</button>
-                    <button class="filter-btn cat-btn" onclick="filterCategory('Sneakers')">Sneakers</button>
-                    <button class="filter-btn cat-btn" onclick="filterCategory('Relojes')">Relojes</button>
+                    <button type="button" class="filter-btn cat-btn active" onclick="filterCategory('Todos')">Todos</button>
+                    <button type="button" class="filter-btn cat-btn" onclick="filterCategory('Sneakers')">Sneakers</button>
+                    <button type="button" class="filter-btn cat-btn" onclick="filterCategory('Relojes')">Relojes</button>
+                    <button type="button" class="filter-btn cat-btn" onclick="filterCategory('Lociones')">Lociones</button>
+                    <button type="button" class="filter-btn cat-btn" onclick="filterCategory('Bolsos')">Bolsos</button>
                 </div>
+
+                <!-- Filtro Género -->
                 <div class="filter-buttons">
-                    <button class="filter-btn gen-btn active" onclick="filterGender('Todos')">Todos</button>
-                    <button class="filter-btn gen-btn" onclick="filterGender('Hombre')">Hombre</button>
-                    <button class="filter-btn gen-btn" onclick="filterGender('Mujer')">Mujer</button>
+                    <button type="button" class="filter-btn gen-btn active" onclick="filterGender('Todos')">Todos</button>
+                    <button type="button" class="filter-btn gen-btn" onclick="filterGender('Hombre')">Hombre</button>
+                    <button type="button" class="filter-btn gen-btn" onclick="filterGender('Mujer')">Mujer</button>
+                    <button type="button" class="filter-btn gen-btn" onclick="filterGender('Unisex')">Unisex</button>
                 </div>
-                <button class="btn-size-guide" onclick="openSizeGuide()">
-                    <i class="fa-solid fa-ruler-combined"></i> Consulta tu talla
-                </button>
+
+                <!-- Filtro Calidad (Original / 1.1 / AAA) -->
+                <div class="filter-buttons">
+                    <button type="button" class="filter-btn qual-btn active" onclick="filterQuality('Todos')">Calidad: Todas</button>
+                    <button type="button" class="filter-btn qual-btn" onclick="filterQuality('Original')">Original</button>
+                    <button type="button" class="filter-btn qual-btn" onclick="filterQuality('1.1')">1.1</button>
+                    <button type="button" class="filter-btn qual-btn" onclick="filterQuality('AAA')">AAA</button>
+                </div>
+
+                <!-- Ordenar + Guía de Tallas -->
+                <div class="catalog-actions-row">
+                    <div class="sort-box">
+                        <i class="fa-solid fa-arrow-up-wide-short"></i>
+                        <select id="sort-select" onchange="applyFilters()">
+                            <option value="default">Ordenar: Destacados</option>
+                            <option value="discount-desc">Mayor descuento (%)</option>
+                            <option value="price-asc">Precio: menor a mayor</option>
+                            <option value="price-desc">Precio: mayor a menor</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-size-guide" onclick="openSizeGuide()">
+                        <i class="fa-solid fa-ruler-combined"></i> Consulta tu talla
+                    </button>
+                </div>
             </div>
 
             <!-- Grilla de Productos -->
-            <div class="products-grid" id="products-container">
-                <!-- Dinámico con JavaScript -->
-            </div>
+            <div class="products-grid" id="products-container"></div>
         </div>
     </section>
 
@@ -148,8 +214,8 @@
             <div class="feature-item">
                 <i class="fa-solid fa-gem"></i>
                 <div>
-                    <h4>Calidad Garantizada</h4>
-                    <p>Estilo y exclusividad</p>
+                    <h4>Calidad Identificada</h4>
+                    <p>Opciones Original, 1.1 y AAA claras</p>
                 </div>
             </div>
         </div>
@@ -160,7 +226,7 @@
         <div class="container footer-grid">
             <div class="footer-col">
                 <img src="assets/logo-bazor.png" alt="BAZOR Logo" class="footer-logo">
-                <p>Tu tienda de confianza en Sneakers y Relojes de alta gama en Colombia. Calidad, estilo y elegancia.</p>
+                <p>Tu tienda de confianza en Sneakers, Relojes, Lociones y Bolsos en Colombia. Calidad, estilo y elegancia.</p>
             </div>
             <div class="footer-col">
                 <h4>Navegación</h4>
@@ -190,10 +256,72 @@
         </div>
     </footer>
 
+    <!-- Modal de Detalles del Producto -->
+    <div id="product-detail-modal" class="detail-modal" onclick="closeProductDetailOutside(event)">
+        <div class="detail-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeProductDetail()" title="Cerrar">&times;</button>
+
+            <div class="detail-top-grid">
+                <div class="detail-gallery">
+                    <div class="detail-main-img-wrap">
+                        <span id="detail-discount-badge" class="discount-pill" style="display: none;"></span>
+                        <img id="detail-main-img" src="" alt="Producto">
+                    </div>
+                    <p id="detail-img-caption" class="detail-img-caption"></p>
+                    <div id="detail-thumbs" class="detail-thumbs"></div>
+                </div>
+
+                <div class="detail-summary">
+                    <p id="detail-breadcrumb" class="detail-breadcrumb"></p>
+                    <h2 id="detail-title" class="detail-title"></h2>
+
+                    <div class="detail-badges">
+                        <span id="detail-quality-badge" class="quality-badge"></span>
+                        <span id="detail-stock-badge" class="stock-badge"><i class="fa-solid fa-circle"></i> Disponible</span>
+                    </div>
+
+                    <div class="detail-price-box">
+                        <span id="detail-old-price" class="price-old"></span>
+                        <div class="price-current-row">
+                            <span id="detail-current-price" class="price-current"></span>
+                            <span id="detail-savings-tag" class="savings-tag"></span>
+                        </div>
+                    </div>
+
+                    <p id="detail-meta-info" class="detail-meta"></p>
+
+                    <div class="detail-actions">
+                        <a id="detail-wa-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i> Pregunta por este producto por WhatsApp
+                        </a>
+                        <button type="button" class="btn-secondary-outline" onclick="closeProductDetail(); openSizeGuide();">
+                            <i class="fa-solid fa-ruler-horizontal"></i> Guía de Tallas
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-tabs-section">
+                <div class="detail-tabs-header">
+                    <button type="button" class="detail-tab-btn active" data-tab="descripcion" onclick="switchDetailTab('descripcion')">Descripción</button>
+                    <button type="button" class="detail-tab-btn" data-tab="detalles" onclick="switchDetailTab('detalles')">Detalles</button>
+                    <button type="button" class="detail-tab-btn" data-tab="envios" onclick="switchDetailTab('envios')">Envíos</button>
+                    <button type="button" class="detail-tab-btn" data-tab="garantia" onclick="switchDetailTab('garantia')">Garantía</button>
+                </div>
+                <div id="detail-tab-content" class="detail-tab-body"></div>
+            </div>
+
+            <div class="detail-related-section">
+                <h3>Productos relacionados</h3>
+                <div id="detail-related-grid" class="related-grid"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal / Ventana Emergente de Guía de Tallas -->
     <div id="size-guide-modal" class="size-modal" onclick="closeSizeGuideOutside(event)">
         <div class="size-modal-content">
-            <button class="size-modal-close" onclick="closeSizeGuide()" title="Cerrar">&times;</button>
+            <button type="button" class="modal-close-btn" onclick="closeSizeGuide()" title="Cerrar">&times;</button>
             <div class="size-modal-header">
                 <h3><i class="fa-solid fa-ruler-combined"></i> GUÍA DE TALLAS BAZOR</h3>
                 <p>Equivalencias oficiales: Colombia (COL) • Europea (EUR) • Americana (US) • Centímetros (CM)</p>
@@ -203,7 +331,7 @@
             </div>
             <div class="size-modal-footer">
                 <span>¿Aún tienes dudas con tu talla?</span>
-                <a href="https://wa.me/573016545328?text=Hola%20BAZOR,%20necesito%20ayuda%20para%20confirmar%20mi%20talla%20en%20unos%20tenis." target="_blank" class="btn-modal-wa">
+                <a href="https://wa.me/573016545328?text=Hola%20BAZOR,%20necesito%20ayuda%20para%20confirmar%20mi%20talla." target="_blank" rel="noopener noreferrer" class="btn-modal-wa">
                     <i class="fa-brands fa-whatsapp"></i> Asesoría de talla por WhatsApp
                 </a>
             </div>
@@ -211,11 +339,10 @@
     </div>
 
     <!-- Botón Flotante de WhatsApp -->
-    <a href="https://wa.me/573016545328?text=Hola,%20quisiera%20recibir%20asesor%C3%3A%20sobre%20los%20productos%20de%20BAZOR." target="_blank" class="whatsapp-float" title="Contactar por WhatsApp">
+    <a href="https://wa.me/573016545328?text=Hola,%20quisiera%20recibir%20asesor%C3%ADa%20sobre%20los%20productos%20de%20BAZOR." target="_blank" rel="noopener noreferrer" class="whatsapp-float" title="Contactar por WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <!-- Script Principal -->
     <script src="script.js"></script>
 </body>
 </html>
